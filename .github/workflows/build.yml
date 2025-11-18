@@ -1,0 +1,27 @@
+name: Build Trojan (Go)
+
+on:
+  workflow_dispatch: {}   # 只能手动运行，最安全
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.20'
+
+      - name: Build Linux AMD64
+        run: |
+          GOOS=linux GOARCH=amd64 go build -o trojan-linux-amd64 ./main.go
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trojan-linux-amd64
+          path: trojan-linux-amd64
