@@ -1,7 +1,7 @@
-name: Build Trojan (Go)
+name: Build Trojan Release (amd64 + arm64)
 
 on:
-  workflow_dispatch: {}   # 只能手动运行，最安全
+  workflow_dispatch: {}   # 手动运行
 
 jobs:
   build:
@@ -16,12 +16,22 @@ jobs:
         with:
           go-version: '1.20'
 
-      - name: Build Linux AMD64
+      - name: Build amd64
         run: |
           GOOS=linux GOARCH=amd64 go build -o trojan-linux-amd64 ./main.go
+          sha256sum trojan-linux-amd64 > trojan-linux-amd64.dgst
 
-      - name: Upload Artifact
+      - name: Build arm64
+        run: |
+          GOOS=linux GOARCH=arm64 go build -o trojan-linux-arm64 ./main.go
+          sha256sum trojan-linux-arm64 > trojan-linux-arm64.dgst
+
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: trojan-linux-amd64
-          path: trojan-linux-amd64
+          name: trojan-build
+          path: |
+            trojan-linux-amd64
+            trojan-linux-amd64.dgst
+            trojan-linux-arm64
+            trojan-linux-arm64.dgst
